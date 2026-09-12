@@ -11,8 +11,8 @@ import time
 # ============================================================
 
 BASE = Path(r"D:\Personal\Code\Tools\rocsat\bench")
-BASE = next(BASE.rglob("bmc-ibm-12.cnf"))
-OUT_DIR = Path(r"D:\Personal\Code\Tools\minisat\benchmarks\experiment_bmc12")
+BASE = next(BASE.rglob("3bitadd_31.cnf"))
+OUT_DIR = Path(r"D:\Personal\Code\Tools\minisat\benchmarks\experiment_3bitadd31")
 SOLVER = Path(r"D:\Personal\Code\Tools\minisat\minisat_runner.exe")
 
 N_SWAPS = 100
@@ -59,22 +59,12 @@ def swap_variables(text, a, b):
     """
     Swap DIMACS variable identities a and b.
 
-    Positive literal:
-        a -> b
-        b -> a
-
-    Negative literal:
-        -a -> -b
-        -b -> -a
-
-    Everything else remains unchanged.
+    Only literals inside clause lines are modified.
+    Comments and the DIMACS header remain unchanged.
     """
 
     def replace_literal(match):
         token = match.group(0)
-
-        if token == "0":
-            return token
 
         sign = ""
         number = token
@@ -92,8 +82,23 @@ def swap_variables(text, a, b):
 
         return sign + str(value)
 
-    # Replace integer tokens only.
-    return re.sub(r"-?\d+", replace_literal, text)
+    lines = []
+
+    for line in text.splitlines(keepends=True):
+
+        # Leave comments and the problem header untouched.
+        stripped = line.lstrip()
+
+        if stripped.startswith("c") or stripped.startswith("p"):
+            lines.append(line)
+            continue
+
+        # This is a clause line: swap only its integer literals.
+        lines.append(
+            re.sub(r"-?\d+", replace_literal, line)
+        )
+
+    return "".join(lines)
 
 
 # ============================================================
