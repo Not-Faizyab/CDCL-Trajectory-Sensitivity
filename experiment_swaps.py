@@ -11,8 +11,8 @@ import time
 # ============================================================
 
 BASE = Path(r"D:\Personal\Code\Tools\rocsat\bench")
-BASE = next(BASE.rglob("3bitadd_31.cnf"))
-OUT_DIR = Path(r"D:\Personal\Code\Tools\minisat\benchmarks\experiment_3bitadd31")
+BASE = next(BASE.rglob("flat200-5.cnf"))
+OUT_DIR = Path(r"D:\Personal\Code\Tools\minisat\benchmarks\experiment_flat2005")
 SOLVER = Path(r"D:\Personal\Code\Tools\minisat\minisat_runner.exe")
 
 N_SWAPS = 100
